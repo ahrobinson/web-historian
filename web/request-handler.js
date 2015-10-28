@@ -19,13 +19,21 @@ exports.handleRequest = function (req, res) {
     fs.readFile(archive.paths.siteAssets + '/index.html', function (err, data) {
       if (err) throw err;
       var chunk = '';
-      chunk = chunk + data;
-
+      chunk += data;
       // console.log("chunk");
        res.end(chunk);
     });
   }
-  if (req.method === "GET" && req.url === "/" + )
+
+  if (req.method === "GET" && req.url.indexOf('www') !== -1) {
+        fs.readFile(archive.paths.archivedSites + '/' + req.url, function(err, data) {
+          if(err) throw err;
+          var chunk = '';
+          chunk += data;
+
+          res.end(chunk);
+        });
+  }
 
 
 
