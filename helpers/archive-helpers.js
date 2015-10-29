@@ -24,6 +24,15 @@ exports.initialize = function(pathsObj){
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
+exports.readFile = function(path,res) {
+  return fs.readFile(path, function (err, data) {
+      if (err) throw err;
+      var chunk = '';
+      chunk += data;
+       res.end(chunk);
+    });
+};
+
 
 exports.readListOfUrls = function(){
 };

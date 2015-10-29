@@ -12,29 +12,39 @@ var defaultCorsHeaders = {
  "Content-Type": "text/html"
 };
 
+
+
+
+
 exports.handleRequest = function (req, res) {
   var statusCode = 200;
   res.writeHead(statusCode, defaultCorsHeaders);
-  if( req.method === "GET" && req.url === '/') {
-    fs.readFile(archive.paths.siteAssets + '/index.html', function (err, data) {
-      if (err) throw err;
+
+  if(req.method === "GET") {
+   if(req.url === '/') {
+      archive.readFile(archive.paths.siteAssets + '/index.html',res);
+    }
+
+    else if (req.url.indexOf('www') !== -1) {
+      archive.readFile(archive.paths.archivedSites + '/' + req.url,res);
+    }
+
+    else if(req.url.indexOf('www') === -1) {
+      res.writeHead(404, defaultCorsHeaders);
+      res.end();
+    }
+  }
+
+  if(req.method === "POST") {
+    res.writeHead(302, defaultCorsHeaders);
+    req.on('data', function(data) {
       var chunk = '';
       chunk += data;
-      // console.log("chunk");
-       res.end(chunk);
+      fs.appendFile(archive.paths.list, JSON.parse(chunk).url + '\n');
+    });
+    req.on('end', function() {
+      console.log('file appended');
+    res.end();
     });
   }
-
-  if (req.method === "GET" && req.url.indexOf('www') !== -1) {
-        fs.readFile(archive.paths.archivedSites + '/' + req.url, function(err, data) {
-          if(err) throw err;
-          var chunk = '';
-          chunk += data;
-
-          res.end(chunk);
-        });
-  }
-
-
-
 };
