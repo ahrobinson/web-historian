@@ -34,16 +34,30 @@ exports.readFile = function(path,res) {
 };
 
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(cb){
+
+  fs.readFile(this.paths.list, function(err, data){
+    var chunk = '';
+    chunk += data;
+    cb(chunk.split('\n'));
+  });
 };
 
-exports.isUrlInList = function(){
+exports.isUrlInList = function(url, cb){
+  this.readListOfUrls(cb);
+
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(url, callback){
+  if(!this.isUrlInList(url,callback)){
+    fs.appendFile(this.paths.list, url);
+  }
 };
 
-exports.isUrlArchived = function(){
+exports.isUrlArchived = function(url, callback){
+  fs.readdir(this.paths.archivedSites, function(err, files){
+    callback(files);
+  });
 };
 
 exports.downloadUrls = function(){
