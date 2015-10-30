@@ -5,6 +5,7 @@ var archive = require("../helpers/archive-helpers");
 var path = require('path');
 var supertest = require('supertest');
 
+
 archive.initialize({
   list: path.join(__dirname, "/testdata/sites.txt")
 });
@@ -146,7 +147,7 @@ describe("archive helpers", function(){
       setTimeout(function () {
         expect(fs.readdirSync(archive.paths.archivedSites)).to.deep.equal(urlArray);
         done();
-      }, 25);
+      }, 250);
     });
   });
 });

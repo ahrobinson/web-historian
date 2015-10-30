@@ -2,6 +2,7 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var fs = require('fs');
+var request = require("request");
 
 
 var defaultCorsHeaders = {
@@ -36,15 +37,27 @@ exports.handleRequest = function (req, res) {
   }
 
   if(req.method === "POST") {
+    var chunk = '';
     res.writeHead(302, defaultCorsHeaders);
     req.on('data', function(data) {
-      var chunk = '';
       chunk += data;
-      fs.appendFile(archive.paths.list, JSON.parse(chunk).url + '\n');
+      console.log("chunk: " + chunk);
+      var url = chunk.split('=')[1];
+      archive.isUrlInList(url, function(exist){
+        if(!exist) {
+          archive.addUrlToList(url, function(){
+            archive.downloadUrls(url);
+          });
+
+        }
+
+      });
     });
     req.on('end', function() {
-      console.log('file appended');
-    res.end();
+      res.end();
     });
   }
+
+//{Location: archive.paths.siteAssets + '/loading.html'}
+
 };
